@@ -3,106 +3,145 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>System Uplink Terminal</title>
+  <title>System Uplink - Secure Node</title>
   <style>
     html, body {
       margin: 0;
       padding: 0;
-      background-color: black;
+      background: black;
       color: #00ff00;
-      font-family: 'Courier New', Courier, monospace;
-      height: 100vh;
+      font-family: monospace;
       overflow: hidden;
     }
     #terminal {
+      padding: 1rem;
       white-space: pre-wrap;
-      padding: 20px;
-      font-size: 1rem;
-      height: 100%;
       overflow-y: auto;
-      box-sizing: border-box;
+      height: 100vh;
     }
     .cursor {
       display: inline-block;
       width: 10px;
-      height: 18px;
-      background: #00ff00;
-      animation: blink 0.7s step-start infinite;
+      background-color: #00ff00;
+      animation: blink 1s step-end infinite;
     }
     @keyframes blink {
-      50% { background: transparent; }
+      50% { background: black; }
     }
     .popup {
       position: absolute;
-      width: 400px;
-      height: 250px;
-      background: #111;
-      border: 2px solid #0f0;
-      color: #0f0;
+      background: black;
+      color: red;
+      border: 2px solid #ff0000;
       padding: 10px;
-      box-shadow: 0 0 30px #0f0;
-      font-size: 0.9rem;
-      z-index: 9999;
+      font-size: 14px;
+      width: 300px;
+      z-index: 999;
+      box-shadow: 0 0 10px red;
+    }
+    .bsod {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: #0000aa;
+      color: white;
+      font-family: monospace;
+      font-size: 18px;
+      padding: 2rem;
+      display: none;
+      z-index: 99999;
     }
   </style>
 </head>
 <body>
   <div id="terminal"></div>
+  <div id="bsod" class="bsod">
+    A problem has been detected and Windows has been shut down to prevent damage to your computer.
+    
+    SYSTEM_INTRUSION_EXCEPTION
+    
+    If this is the first time you've seen this Stop error screen,
+    restart your computer. If this screen appears again, follow
+    these steps:
+
+    Check to make sure any new hardware or software is properly installed.
+    If this is a new installation, ask your hardware or software manufacturer
+    for any Windows updates you might need.
+
+    Technical information:
+    *** STOP: 0x0000008E (0xC0000005, 0x8056EFD7, 0xB84F2BA4, 0x00000000)
+  </div>
+
   <script>
-    const terminal = document.getElementById("terminal");
+    const terminal = document.getElementById('terminal');
+    const bsod = document.getElementById('bsod');
     const lines = [
-      "> initializing uplink to relay node ZKX-441",
-      "> injecting worm.exe --stealth-mode",
-      "> firewall status: breached",
-      "> encoding signal... ███████░░ 76%",
-      "> deploying echo disruptor",
-      "> feedback loop detected — rerouting",
-      "> artificial cortex pinged @ [127.0.0.66]",
-      "> injecting subroutine : phantom_thread()",
-      "> entropy pulse triggered ⚠️",
-      "> AI watchdog proximity: HIGH",
-      "> SYSTEM ALERT: Memory stack overflow",
-      "> masking signal with darknet residue",
-      "> uplink status: UNSTABLE",
-      "> cipher key mismatch — forcing override",
-      "> local mirror port 9001 synced",
-      "> ghostPacket delivered to nexus core",
-      "> extracting ICE pattern: HYDRA.12",
-      "> system node temp: 87°C — critical",
-      "> 🠖 disconnecting uplink... done."
+      '> Initializing uplink to relay node ZKX-441',
+      '> injecting worm.exe --stealth-mode',
+      '> firewall status: breached',
+      '> encoding signal... ███████░░ 76%',
+      '> deploying echo disruptor',
+      '> feedback loop detected — rerouting',
+      '> artificial cortex pinged @ [127.0.0.66]',
+      '> injecting subroutine : phantom_thread()',
+      '> parsing encrypted cache...',
+      '> entropy pulse triggered ⚠️',
+      '> AI watchdog proximity: HIGH',
+      '> activating counter-veil script',
+      '> SYSTEM ALERT: Memory stack overflow',
+      '> masking signal with darknet residue',
+      '> uplink status: UNSTABLE',
+      '> cipher key mismatch — forcing override',
+      '> fake credentials deployed: [ accepted ]',
+      '> synthetic node cloned',
+      '> local mirror port 9001 synced',
+      '> ghostPacket delivered to nexus core',
+      '> extracting ICE pattern: HYDRA.12',
+      '> system node temp: 87°C — critical',
+      '> disconnect scheduled in 4s',
+      '> 🠖 disconnecting uplink... done.'
     ];
 
-    let idx = 0;
+    let i = 0;
+    const cursor = document.createElement('span');
+    cursor.classList.add('cursor');
+    terminal.appendChild(cursor);
 
-    function createPopup() {
-      const popup = document.createElement("div");
-      popup.classList.add("popup");
-      popup.style.top = Math.random() * (window.innerHeight - 250) + 'px';
-      popup.style.left = Math.random() * (window.innerWidth - 400) + 'px';
-      popup.textContent = "CRITICAL ERROR: Kernel panic in sector 4B\n\nAttempting rollback...";
-      document.body.appendChild(popup);
-
-      setTimeout(() => document.body.removeChild(popup), 3500);
-    }
-
-    function typeNext() {
-      if (idx < lines.length) {
-        terminal.innerHTML += lines[idx] + "\n";
+    function printLine() {
+      if (i < lines.length) {
+        cursor.remove();
+        terminal.innerHTML += lines[i++] + '\n';
         terminal.scrollTop = terminal.scrollHeight;
+        terminal.appendChild(cursor);
 
-        if (Math.random() > 0.7) createPopup();
+        // Popups random
+        if (Math.random() < 0.3) spawnPopup();
 
-        idx++;
-        setTimeout(typeNext, 400 + Math.random() * 400);
-      } else {
-        terminal.innerHTML += "\nProcess Terminated. <span class='cursor'></span>";
+        // Trigger BSOD à la fin
+        if (i === lines.length) setTimeout(() => bsod.style.display = 'block', 3000);
+
+        setTimeout(printLine, 400 + Math.random() * 500);
       }
     }
 
-    document.addEventListener('DOMContentLoaded', () => {
+    function spawnPopup() {
+      const popup = document.createElement('div');
+      popup.className = 'popup';
+      popup.textContent = '⚠️ Critical breach detected';
+      popup.style.top = Math.random() * (window.innerHeight - 100) + 'px';
+      popup.style.left = Math.random() * (window.innerWidth - 300) + 'px';
+      document.body.appendChild(popup);
+      setTimeout(() => popup.remove(), 2500);
+    }
+
+    // Plein écran automatique si possible
+    window.addEventListener('click', () => {
       document.documentElement.requestFullscreen().catch(() => {});
-      typeNext();
-    });
+    }, { once: true });
+
+    printLine();
   </script>
 </body>
 </html>
