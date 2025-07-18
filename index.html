@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>System Uplink Terminal</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      background-color: black;
+      color: #00ff00;
+      font-family: 'Courier New', Courier, monospace;
+      height: 100vh;
+      overflow: hidden;
+    }
+    #terminal {
+      white-space: pre-wrap;
+      padding: 20px;
+      font-size: 1rem;
+      height: 100%;
+      overflow-y: auto;
+      box-sizing: border-box;
+    }
+    .cursor {
+      display: inline-block;
+      width: 10px;
+      height: 18px;
+      background: #00ff00;
+      animation: blink 0.7s step-start infinite;
+    }
+    @keyframes blink {
+      50% { background: transparent; }
+    }
+    .popup {
+      position: absolute;
+      width: 400px;
+      height: 250px;
+      background: #111;
+      border: 2px solid #0f0;
+      color: #0f0;
+      padding: 10px;
+      box-shadow: 0 0 30px #0f0;
+      font-size: 0.9rem;
+      z-index: 9999;
+    }
+  </style>
+</head>
+<body>
+  <div id="terminal"></div>
+  <script>
+    const terminal = document.getElementById("terminal");
+    const lines = [
+      "> initializing uplink to relay node ZKX-441",
+      "> injecting worm.exe --stealth-mode",
+      "> firewall status: breached",
+      "> encoding signal... ███████░░ 76%",
+      "> deploying echo disruptor",
+      "> feedback loop detected — rerouting",
+      "> artificial cortex pinged @ [127.0.0.66]",
+      "> injecting subroutine : phantom_thread()",
+      "> entropy pulse triggered ⚠️",
+      "> AI watchdog proximity: HIGH",
+      "> SYSTEM ALERT: Memory stack overflow",
+      "> masking signal with darknet residue",
+      "> uplink status: UNSTABLE",
+      "> cipher key mismatch — forcing override",
+      "> local mirror port 9001 synced",
+      "> ghostPacket delivered to nexus core",
+      "> extracting ICE pattern: HYDRA.12",
+      "> system node temp: 87°C — critical",
+      "> 🠖 disconnecting uplink... done."
+    ];
+
+    let idx = 0;
+
+    function createPopup() {
+      const popup = document.createElement("div");
+      popup.classList.add("popup");
+      popup.style.top = Math.random() * (window.innerHeight - 250) + 'px';
+      popup.style.left = Math.random() * (window.innerWidth - 400) + 'px';
+      popup.textContent = "CRITICAL ERROR: Kernel panic in sector 4B\n\nAttempting rollback...";
+      document.body.appendChild(popup);
+
+      setTimeout(() => document.body.removeChild(popup), 3500);
+    }
+
+    function typeNext() {
+      if (idx < lines.length) {
+        terminal.innerHTML += lines[idx] + "\n";
+        terminal.scrollTop = terminal.scrollHeight;
+
+        if (Math.random() > 0.7) createPopup();
+
+        idx++;
+        setTimeout(typeNext, 400 + Math.random() * 400);
+      } else {
+        terminal.innerHTML += "\nProcess Terminated. <span class='cursor'></span>";
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      document.documentElement.requestFullscreen().catch(() => {});
+      typeNext();
+    });
+  </script>
+</body>
+</html>
