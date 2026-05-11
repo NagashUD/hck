@@ -141,7 +141,6 @@
       document.documentElement.requestFullscreen().catch(() => {});
     }, { once: true });
 
-<script>
 async function logVisit() {
   try {
     await fetch('/api/log', {
@@ -153,7 +152,6 @@ async function logVisit() {
 }
 
 logVisit();
-</script>
 
     printLine();
   </script>
